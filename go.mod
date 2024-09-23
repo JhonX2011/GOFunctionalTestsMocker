@@ -1,4 +1,4 @@
-module github.com/JhonX2011/FunctionalTestsMocker
+module github.com/JhonX2011/GOFunctionalTestsMocker
 
 go 1.21
 
