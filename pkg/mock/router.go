@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type Router interface {
@@ -28,7 +29,14 @@ type router struct {
 }
 
 func (r *router) Run(address string) error {
-	return http.ListenAndServe(address, r.server)
+	server := &http.Server{
+		Addr:         address,
+		Handler:      r.server,
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+		IdleTimeout:  60 * time.Second,
+	}
+	return server.ListenAndServe()
 }
 
 func (r *router) addMappingRoute() {
@@ -116,7 +124,10 @@ func buildRequest(request *http.Request) httpRequest {
 	header := request.Header
 	buf := new(bytes.Buffer)
 	if request.Body != nil {
-		buf.ReadFrom(request.Body)
+		_, err := buf.ReadFrom(request.Body)
+		if err != nil {
+			return httpRequest{}
+		}
 	}
 	return httpRequest{
 		URL:             request.URL.Path,

@@ -132,6 +132,5 @@ func (o operator) getPredicate() biPredicate[string, string] {
 		return equalsPredicate
 	default:
 		return nil
-
 	}
 }
